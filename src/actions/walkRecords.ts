@@ -62,7 +62,7 @@ export async function updateWalkRecord(id: string, updates: Partial<WalkRecord>)
 
 export async function deleteWalkRecord(id: string) {
   try {
-    const { error } = await supabaseAdmin
+    const { error } = await supabase
       .from('walk_records')
       .delete()
       .eq('id', id)
