@@ -20,10 +20,10 @@ export default function Header() {
               ホーム
             </Link>
             <Link 
-              href="/dashboard" 
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+              href="/dashboard/history" 
+              className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
             >
-              新規記録
+              記録履歴
             </Link>
           </nav>
         </div>
