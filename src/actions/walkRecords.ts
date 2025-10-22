@@ -5,16 +5,22 @@ import { WalkRecord } from '@/types'
 
 export async function createWalkRecord(record: Omit<WalkRecord, 'id' | 'created_at' | 'updated_at'>) {
   try {
-    // データベーススキーマに合わせてデータを変換
+    console.log('Creating walk record with data:', record)
+    
+    // 現在のテーブル構造に合わせてデータを変換
     const dbRecord = {
-      dog_name: record.dog_name,
+      user_id: '00000000-0000-0000-0000-000000000000', // ダミーのuser_id
       start_time: new Date().toISOString(),
-      end_time: new Date(Date.now() + record.duration * 60000).toISOString(),
-      duration_minutes: record.duration,
-      distance_km: record.distance,
-      notes: record.notes || null,
-      weather: record.weather || null
+      route_data: {
+        dog_name: record.dog_name,
+        duration: record.duration,
+        distance: record.distance,
+        notes: record.notes || null,
+        weather: record.weather || null
+      }
     }
+
+    console.log('Database record to insert:', dbRecord)
 
     const { data, error } = await supabase
       .from('walk_records')
@@ -22,22 +28,26 @@ export async function createWalkRecord(record: Omit<WalkRecord, 'id' | 'created_
       .select()
       .single()
 
+    console.log('Supabase response:', { data, error })
+
     if (error) {
+      console.error('Supabase error details:', error)
       throw new Error(`Failed to create walk record: ${error.message}`)
     }
 
-    // アプリケーション型に合わせてデータを変換
+    // アプリケーション型に変換
     const appRecord: WalkRecord = {
       id: data.id,
-      dog_name: data.dog_name,
-      duration: data.duration_minutes,
-      distance: data.distance_km || 0,
-      notes: data.notes || undefined,
-      weather: data.weather || undefined,
+      dog_name: data.route_data?.dog_name || '',
+      duration: data.route_data?.duration || 0,
+      distance: data.route_data?.distance || 0,
+      notes: data.route_data?.notes || undefined,
+      weather: data.route_data?.weather || undefined,
       created_at: data.created_at,
-      updated_at: data.updated_at
+      updated_at: data.created_at // updated_atは存在しないのでcreated_atを使用
     }
 
+    console.log('Created app record:', appRecord)
     return { success: true, data: appRecord }
   } catch (error) {
     console.error('Error creating walk record:', error)
@@ -56,16 +66,18 @@ export async function getWalkRecords(): Promise<WalkRecord[]> {
       throw new Error(`Failed to fetch walk records: ${error.message}`)
     }
 
+    console.log('Fetched records from database:', data)
+    
     // データベースのデータをアプリケーション型に変換
     const appRecords: WalkRecord[] = (data || []).map(record => ({
       id: record.id,
-      dog_name: record.dog_name,
-      duration: record.duration_minutes,
-      distance: record.distance_km || 0,
-      notes: record.notes || undefined,
-      weather: record.weather || undefined,
+      dog_name: record.route_data?.dog_name || '',
+      duration: record.route_data?.duration || 0,
+      distance: record.route_data?.distance || 0,
+      notes: record.route_data?.notes || undefined,
+      weather: record.route_data?.weather || undefined,
       created_at: record.created_at,
-      updated_at: record.updated_at
+      updated_at: record.created_at // updated_atは存在しないのでcreated_atを使用
     }))
 
     return appRecords

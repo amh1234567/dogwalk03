@@ -38,7 +38,9 @@ export default function Home() {
     setIsLoading(true)
 
     try {
-      await createWalkRecord({
+      console.log('Submitting form data:', formData)
+      
+      const result = await createWalkRecord({
         dog_name: formData.dog_name,
         duration: parseInt(formData.duration),
         distance: parseFloat(formData.distance),
@@ -46,8 +48,15 @@ export default function Home() {
         weather: formData.weather as 'sunny' | 'cloudy' | 'rainy' | 'snowy'
       })
       
+      console.log('Create walk record result:', result)
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to create walk record')
+      }
+      
       // 記録を再取得
       const data = await getWalkRecords()
+      console.log('Fetched records after creation:', data)
       setRecords(data)
       
       // フォームをリセット
@@ -63,7 +72,7 @@ export default function Home() {
       alert('散歩記録を保存しました！')
     } catch (error) {
       console.error('散歩記録の作成に失敗しました:', error)
-      alert('散歩記録の作成に失敗しました。もう一度お試しください。')
+      alert(`散歩記録の作成に失敗しました: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setIsLoading(false)
     }
