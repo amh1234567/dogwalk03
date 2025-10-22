@@ -2,14 +2,10 @@
 export interface WalkRecord {
   id: string
   dog_name: string
-  start_time: string
-  end_time: string
-  duration_minutes: number
-  distance_km?: number
-  route?: string
+  duration: number
+  distance: number
   notes?: string
   weather?: string
-  temperature?: number
   created_at: string
   updated_at: string
 }

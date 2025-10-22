@@ -18,6 +18,7 @@ export default function WalkHistory() {
         setRecords(data)
       } catch (error) {
         console.error('散歩記録の取得に失敗しました:', error)
+        setRecords([])
       } finally {
         setIsLoading(false)
       }
@@ -37,7 +38,7 @@ export default function WalkHistory() {
     })
   }
 
-  const getWeatherIcon = (weather: string) => {
+  const getWeatherIcon = (weather: string | undefined) => {
     switch (weather) {
       case 'sunny': return '☀️'
       case 'cloudy': return '☁️'
@@ -47,7 +48,7 @@ export default function WalkHistory() {
     }
   }
 
-  const getWeatherText = (weather: string) => {
+  const getWeatherText = (weather: string | undefined) => {
     switch (weather) {
       case 'sunny': return '晴れ'
       case 'cloudy': return '曇り'

@@ -26,6 +26,7 @@ export default function Home() {
         setRecords(data)
       } catch (error) {
         console.error('散歩記録の取得に失敗しました:', error)
+        setRecords([])
       }
     }
     fetchRecords()
@@ -85,7 +86,7 @@ export default function Home() {
     })
   }
 
-  const getWeatherIcon = (weather: string) => {
+  const getWeatherIcon = (weather: string | undefined) => {
     switch (weather) {
       case 'sunny': return '☀️'
       case 'cloudy': return '☁️'

@@ -3,7 +3,7 @@
 import { supabase } from '@/lib/supabase'
 import { WalkRecord } from '@/types'
 
-export async function createWalkRecord(record: Omit<WalkRecord, 'id' | 'created_at'>) {
+export async function createWalkRecord(record: Omit<WalkRecord, 'id' | 'created_at' | 'updated_at'>) {
   try {
     const { data, error } = await supabase
       .from('walk_records')
@@ -22,7 +22,7 @@ export async function createWalkRecord(record: Omit<WalkRecord, 'id' | 'created_
   }
 }
 
-export async function getWalkRecords() {
+export async function getWalkRecords(): Promise<WalkRecord[]> {
   try {
     const { data, error } = await supabase
       .from('walk_records')
@@ -33,10 +33,10 @@ export async function getWalkRecords() {
       throw new Error(`Failed to fetch walk records: ${error.message}`)
     }
 
-    return { success: true, data: data || [] }
+    return data || []
   } catch (error) {
     console.error('Error fetching walk records:', error)
-    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
+    throw error
   }
 }
 
