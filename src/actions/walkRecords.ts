@@ -90,7 +90,14 @@ export async function getWalkRecords(): Promise<WalkRecord[]> {
 export async function updateWalkRecord(id: string, updates: Partial<WalkRecord>) {
   try {
     // アプリケーション型をデータベース型に変換
-    const dbUpdates: any = {}
+    const dbUpdates: Partial<{
+      dog_name: string
+      duration_minutes: number
+      distance_km: number | null
+      notes: string | null
+      weather: string | null
+      temperature: number | null
+    }> = {}
     if (updates.dog_name !== undefined) dbUpdates.dog_name = updates.dog_name
     if (updates.duration !== undefined) dbUpdates.duration_minutes = updates.duration
     if (updates.distance !== undefined) dbUpdates.distance_km = updates.distance

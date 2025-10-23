@@ -1,7 +1,5 @@
 'use client'
 
-import Image from 'next/image'
-
 export default function MainVisual() {
   return (
     <section className="relative bg-gradient-to-r from-blue-500 to-purple-600 text-white">

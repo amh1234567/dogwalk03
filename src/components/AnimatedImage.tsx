@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 
 interface AnimatedImageProps {
   src: string
@@ -26,7 +27,7 @@ export default function AnimatedImage({
 
   return (
     <div className={`transition-all duration-500 ${isLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
-      <img
+      <Image
         src={src}
         alt={alt}
         width={width}

@@ -34,7 +34,7 @@ export const typedSupabase = createClient<Database>(supabaseUrl, supabaseAnonKey
 // ヘルパー関数：接続テスト
 export async function testConnection() {
   try {
-    const { data, error } = await supabase
+    const { data: _data, error } = await supabase
       .from('dogwalk03table')
       .select('count')
       .limit(1)
