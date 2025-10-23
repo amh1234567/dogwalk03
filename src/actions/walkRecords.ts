@@ -7,23 +7,23 @@ export async function createWalkRecord(record: Omit<WalkRecord, 'id' | 'created_
   try {
     console.log('Creating walk record with data:', record)
     
-    // 現在のテーブル構造に合わせてデータを変換
+    // dogwalk03tableの構造に合わせてデータを変換
     const dbRecord = {
-      user_id: '00000000-0000-0000-0000-000000000000', // ダミーのuser_id
+      dog_name: record.dog_name,
       start_time: new Date().toISOString(),
-      route_data: {
-        dog_name: record.dog_name,
-        duration: record.duration,
-        distance: record.distance,
-        notes: record.notes || null,
-        weather: record.weather || null
-      }
+      end_time: new Date(Date.now() + record.duration * 60000).toISOString(), // durationを分からミリ秒に変換
+      duration_minutes: record.duration,
+      distance_km: record.distance,
+      route: null,
+      notes: record.notes || null,
+      weather: record.weather || null,
+      temperature: null
     }
 
     console.log('Database record to insert:', dbRecord)
 
     const { data, error } = await supabase
-      .from('walk_records')
+      .from('dogwalk03table')
       .insert([dbRecord])
       .select()
       .single()
@@ -38,13 +38,13 @@ export async function createWalkRecord(record: Omit<WalkRecord, 'id' | 'created_
     // アプリケーション型に変換
     const appRecord: WalkRecord = {
       id: data.id,
-      dog_name: data.route_data?.dog_name || '',
-      duration: data.route_data?.duration || 0,
-      distance: data.route_data?.distance || 0,
-      notes: data.route_data?.notes || undefined,
-      weather: data.route_data?.weather || undefined,
+      dog_name: data.dog_name,
+      duration: data.duration_minutes,
+      distance: data.distance_km || 0,
+      notes: data.notes || undefined,
+      weather: data.weather || undefined,
       created_at: data.created_at,
-      updated_at: data.created_at // updated_atは存在しないのでcreated_atを使用
+      updated_at: data.updated_at
     }
 
     console.log('Created app record:', appRecord)
@@ -58,7 +58,7 @@ export async function createWalkRecord(record: Omit<WalkRecord, 'id' | 'created_
 export async function getWalkRecords(): Promise<WalkRecord[]> {
   try {
     const { data, error } = await supabase
-      .from('walk_records')
+      .from('dogwalk03table')
       .select('*')
       .order('created_at', { ascending: false })
 
@@ -71,13 +71,13 @@ export async function getWalkRecords(): Promise<WalkRecord[]> {
     // データベースのデータをアプリケーション型に変換
     const appRecords: WalkRecord[] = (data || []).map(record => ({
       id: record.id,
-      dog_name: record.route_data?.dog_name || '',
-      duration: record.route_data?.duration || 0,
-      distance: record.route_data?.distance || 0,
-      notes: record.route_data?.notes || undefined,
-      weather: record.route_data?.weather || undefined,
+      dog_name: record.dog_name,
+      duration: record.duration_minutes,
+      distance: record.distance_km || 0,
+      notes: record.notes || undefined,
+      weather: record.weather || undefined,
       created_at: record.created_at,
-      updated_at: record.created_at // updated_atは存在しないのでcreated_atを使用
+      updated_at: record.updated_at
     }))
 
     return appRecords
@@ -89,9 +89,17 @@ export async function getWalkRecords(): Promise<WalkRecord[]> {
 
 export async function updateWalkRecord(id: string, updates: Partial<WalkRecord>) {
   try {
+    // アプリケーション型をデータベース型に変換
+    const dbUpdates: any = {}
+    if (updates.dog_name !== undefined) dbUpdates.dog_name = updates.dog_name
+    if (updates.duration !== undefined) dbUpdates.duration_minutes = updates.duration
+    if (updates.distance !== undefined) dbUpdates.distance_km = updates.distance
+    if (updates.notes !== undefined) dbUpdates.notes = updates.notes
+    if (updates.weather !== undefined) dbUpdates.weather = updates.weather
+
     const { data, error } = await supabase
-      .from('walk_records')
-      .update(updates)
+      .from('dogwalk03table')
+      .update(dbUpdates)
       .eq('id', id)
       .select()
       .single()
@@ -110,7 +118,7 @@ export async function updateWalkRecord(id: string, updates: Partial<WalkRecord>)
 export async function deleteWalkRecord(id: string) {
   try {
     const { error } = await supabase
-      .from('walk_records')
+      .from('dogwalk03table')
       .delete()
       .eq('id', id)
 

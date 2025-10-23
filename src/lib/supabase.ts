@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { Database } from '../types/database.types.js'
 
 // 環境変数の取得
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -22,119 +23,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   }
 })
 
-// データベースのテーブル型定義
-export type Database = {
-  public: {
-    Tables: {
-      walk_records: {
-        Row: {
-          id: string
-          dog_name: string
-          start_time: string
-          end_time: string
-          duration_minutes: number
-          distance_km: number | null
-          route: string | null
-          notes: string | null
-          weather: string | null
-          temperature: number | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          dog_name: string
-          start_time: string
-          end_time: string
-          duration_minutes: number
-          distance_km?: number | null
-          route?: string | null
-          notes?: string | null
-          weather?: string | null
-          temperature?: number | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          dog_name?: string
-          start_time?: string
-          end_time?: string
-          duration_minutes?: number
-          distance_km?: number | null
-          route?: string | null
-          notes?: string | null
-          weather?: string | null
-          temperature?: number | null
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      dogs: {
-        Row: {
-          id: string
-          name: string
-          breed: string | null
-          age: number | null
-          weight: number | null
-          notes: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          name: string
-          breed?: string | null
-          age?: number | null
-          weight?: number | null
-          notes?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          name?: string
-          breed?: string | null
-          age?: number | null
-          weight?: number | null
-          notes?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      walk_routes: {
-        Row: {
-          id: string
-          name: string
-          description: string | null
-          distance_km: number
-          estimated_duration_minutes: number
-          difficulty: 'easy' | 'medium' | 'hard'
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          name: string
-          description?: string | null
-          distance_km: number
-          estimated_duration_minutes: number
-          difficulty: 'easy' | 'medium' | 'hard'
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          name?: string
-          description?: string | null
-          distance_km?: number
-          estimated_duration_minutes?: number
-          difficulty?: 'easy' | 'medium' | 'hard'
-          created_at?: string
-        }
-      }
-    }
-  }
-}
-
 // 型付きクライアントの作成
 export const typedSupabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
@@ -147,7 +35,7 @@ export const typedSupabase = createClient<Database>(supabaseUrl, supabaseAnonKey
 export async function testConnection() {
   try {
     const { data, error } = await supabase
-      .from('walk_records')
+      .from('dogwalk03table')
       .select('count')
       .limit(1)
     
