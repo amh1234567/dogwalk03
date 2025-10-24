@@ -11,11 +11,8 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({
-    dog_name: '',
-    duration: '',
-    distance: '',
-    notes: '',
-    weather: 'sunny'
+    duration_minutes: '',
+    course_name: ''
   })
 
   // 散歩記録を取得
@@ -41,11 +38,8 @@ export default function Home() {
       console.log('Submitting form data:', formData)
       
       const result = await createWalkRecord({
-        dog_name: formData.dog_name,
-        duration: parseInt(formData.duration),
-        distance: parseFloat(formData.distance),
-        notes: formData.notes,
-        weather: formData.weather as 'sunny' | 'cloudy' | 'rainy' | 'snowy'
+        duration_minutes: parseInt(formData.duration_minutes),
+        course_name: formData.course_name
       })
       
       console.log('Create walk record result:', result)
@@ -61,11 +55,8 @@ export default function Home() {
       
       // フォームをリセット
       setFormData({
-        dog_name: '',
-        duration: '',
-        distance: '',
-        notes: '',
-        weather: 'sunny'
+        duration_minutes: '',
+        course_name: ''
       })
       setShowForm(false)
       
@@ -95,15 +86,6 @@ export default function Home() {
     })
   }
 
-  const getWeatherIcon = (weather: string | undefined) => {
-    switch (weather) {
-      case 'sunny': return '☀️'
-      case 'cloudy': return '☁️'
-      case 'rainy': return '🌧️'
-      case 'snowy': return '❄️'
-      default: return '☀️'
-    }
-  }
 
   // 今日の記録を取得
   const todayRecords = records.filter(record => {
@@ -114,7 +96,7 @@ export default function Home() {
 
   // 統計を計算
   const totalRecords = records.length
-  const totalDistance = records.reduce((sum, record) => sum + record.distance, 0)
+  const totalDuration = records.reduce((sum, record) => sum + record.duration_minutes, 0)
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -142,8 +124,8 @@ export default function Home() {
           </div>
           
           <div className="bg-gray-50 rounded-lg border border-gray-200 p-6 text-center">
-            <h3 className="text-sm font-medium text-gray-600 mb-2">総距離</h3>
-            <p className="text-2xl font-bold text-gray-900">{totalDistance.toFixed(1)}km</p>
+            <h3 className="text-sm font-medium text-gray-600 mb-2">総散歩時間</h3>
+            <p className="text-2xl font-bold text-gray-900">{totalDuration}分</p>
           </div>
         </div>
 
@@ -171,48 +153,14 @@ export default function Home() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="dog_name" className="block text-sm font-medium text-gray-700 mb-1">
-                      犬の名前 *
-                    </label>
-                    <input
-                      type="text"
-                      id="dog_name"
-                      name="dog_name"
-                      value={formData.dog_name}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="例: ポチ"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="weather" className="block text-sm font-medium text-gray-700 mb-1">
-                      天気
-                    </label>
-                    <select
-                      id="weather"
-                      name="weather"
-                      value={formData.weather}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="sunny">☀️ 晴れ</option>
-                      <option value="cloudy">☁️ 曇り</option>
-                      <option value="rainy">🌧️ 雨</option>
-                      <option value="snowy">❄️ 雪</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="duration_minutes" className="block text-sm font-medium text-gray-700 mb-1">
                       散歩時間（分） *
                     </label>
                     <input
                       type="number"
-                      id="duration"
-                      name="duration"
-                      value={formData.duration}
+                      id="duration_minutes"
+                      name="duration_minutes"
+                      value={formData.duration_minutes}
                       onChange={handleChange}
                       required
                       min="1"
@@ -221,36 +169,20 @@ export default function Home() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="distance" className="block text-sm font-medium text-gray-700 mb-1">
-                      距離（km） *
+                    <label htmlFor="course_name" className="block text-sm font-medium text-gray-700 mb-1">
+                      散歩コース *
                     </label>
                     <input
-                      type="number"
-                      id="distance"
-                      name="distance"
-                      value={formData.distance}
+                      type="text"
+                      id="course_name"
+                      name="course_name"
+                      value={formData.course_name}
                       onChange={handleChange}
                       required
-                      min="0"
-                      step="0.1"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="例: 2.5"
+                      placeholder="例: 公園コース"
                     />
                   </div>
-                </div>
-                <div>
-                  <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
-                    メモ
-                  </label>
-                  <textarea
-                    id="notes"
-                    name="notes"
-                    value={formData.notes}
-                    onChange={handleChange}
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="散歩の感想や気づいたことなど..."
-                  />
                 </div>
                 <div className="flex gap-3">
                   <button
@@ -289,13 +221,12 @@ export default function Home() {
                   <div className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                     <div>
-                      <p className="font-medium text-gray-900">{record.dog_name}との散歩</p>
-                      <p className="text-sm text-gray-500">{formatDate(record.created_at)} {getWeatherIcon(record.weather)}</p>
+                      <p className="font-medium text-gray-900">{record.course_name}</p>
+                      <p className="text-sm text-gray-500">{formatDate(record.created_at)}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium text-gray-900">{record.duration}分</p>
-                    <p className="text-xs text-gray-500">{record.distance}km</p>
+                    <p className="text-sm font-medium text-gray-900">{record.duration_minutes}分</p>
                   </div>
                 </div>
               ))}

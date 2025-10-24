@@ -1,11 +1,8 @@
 // 散歩記録の型定義
 export interface WalkRecord {
   id: string
-  dog_name: string
-  duration: number
-  distance: number
-  notes?: string
-  weather?: string
+  duration_minutes: number
+  course_name: string
   created_at: string
   updated_at: string
 }

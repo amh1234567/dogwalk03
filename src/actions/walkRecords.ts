@@ -9,15 +9,8 @@ export async function createWalkRecord(record: Omit<WalkRecord, 'id' | 'created_
     
     // dogwalk03tableの構造に合わせてデータを変換
     const dbRecord = {
-      dog_name: record.dog_name,
-      start_time: new Date().toISOString(),
-      end_time: new Date(Date.now() + record.duration * 60000).toISOString(), // durationを分からミリ秒に変換
-      duration_minutes: record.duration,
-      distance_km: record.distance,
-      route: null,
-      notes: record.notes || null,
-      weather: record.weather || null,
-      temperature: null
+      duration_minutes: record.duration_minutes,
+      course_name: record.course_name
     }
 
     console.log('Database record to insert:', dbRecord)
@@ -38,11 +31,8 @@ export async function createWalkRecord(record: Omit<WalkRecord, 'id' | 'created_
     // アプリケーション型に変換
     const appRecord: WalkRecord = {
       id: data.id,
-      dog_name: data.dog_name,
-      duration: data.duration_minutes,
-      distance: data.distance_km || 0,
-      notes: data.notes || undefined,
-      weather: data.weather || undefined,
+      duration_minutes: data.duration_minutes,
+      course_name: data.course_name,
       created_at: data.created_at,
       updated_at: data.updated_at
     }
@@ -71,11 +61,8 @@ export async function getWalkRecords(): Promise<WalkRecord[]> {
     // データベースのデータをアプリケーション型に変換
     const appRecords: WalkRecord[] = (data || []).map(record => ({
       id: record.id,
-      dog_name: record.dog_name,
-      duration: record.duration_minutes,
-      distance: record.distance_km || 0,
-      notes: record.notes || undefined,
-      weather: record.weather || undefined,
+      duration_minutes: record.duration_minutes,
+      course_name: record.course_name,
       created_at: record.created_at,
       updated_at: record.updated_at
     }))
@@ -91,18 +78,11 @@ export async function updateWalkRecord(id: string, updates: Partial<WalkRecord>)
   try {
     // アプリケーション型をデータベース型に変換
     const dbUpdates: Partial<{
-      dog_name: string
       duration_minutes: number
-      distance_km: number | null
-      notes: string | null
-      weather: string | null
-      temperature: number | null
+      course_name: string
     }> = {}
-    if (updates.dog_name !== undefined) dbUpdates.dog_name = updates.dog_name
-    if (updates.duration !== undefined) dbUpdates.duration_minutes = updates.duration
-    if (updates.distance !== undefined) dbUpdates.distance_km = updates.distance
-    if (updates.notes !== undefined) dbUpdates.notes = updates.notes
-    if (updates.weather !== undefined) dbUpdates.weather = updates.weather
+    if (updates.duration_minutes !== undefined) dbUpdates.duration_minutes = updates.duration_minutes
+    if (updates.course_name !== undefined) dbUpdates.course_name = updates.course_name
 
     const { data, error } = await supabase
       .from('dogwalk03table')
