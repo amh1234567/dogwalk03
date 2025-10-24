@@ -38,25 +38,6 @@ export default function WalkHistory() {
     })
   }
 
-  const getWeatherIcon = (weather: string | undefined) => {
-    switch (weather) {
-      case 'sunny': return '☀️'
-      case 'cloudy': return '☁️'
-      case 'rainy': return '🌧️'
-      case 'snowy': return '❄️'
-      default: return '☀️'
-    }
-  }
-
-  const getWeatherText = (weather: string | undefined) => {
-    switch (weather) {
-      case 'sunny': return '晴れ'
-      case 'cloudy': return '曇り'
-      case 'rainy': return '雨'
-      case 'snowy': return '雪'
-      default: return '晴れ'
-    }
-  }
 
   if (isLoading) {
     return (
@@ -105,14 +86,8 @@ export default function WalkHistory() {
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
                         <h3 className="text-lg font-semibold text-gray-900">
-                          {record.dog_name}との散歩
+                          {record.course_name}
                         </h3>
-                        <span className="text-lg">
-                          {getWeatherIcon(record.weather)}
-                        </span>
-                        <span className="text-sm text-gray-500">
-                          {getWeatherText(record.weather)}
-                        </span>
                       </div>
                       <p className="text-sm text-gray-500 mb-3">
                         {formatDate(record.created_at)}
@@ -120,20 +95,9 @@ export default function WalkHistory() {
                       <div className="flex gap-6 text-sm">
                         <div>
                           <span className="text-gray-500">時間: </span>
-                          <span className="font-medium text-gray-900">{record.duration}分</span>
-                        </div>
-                        <div>
-                          <span className="text-gray-500">距離: </span>
-                          <span className="font-medium text-gray-900">{record.distance}km</span>
+                          <span className="font-medium text-gray-900">{record.duration_minutes}分</span>
                         </div>
                       </div>
-                      {record.notes && (
-                        <div className="mt-3">
-                          <p className="text-sm text-gray-600 bg-gray-50 rounded-lg p-3">
-                            {record.notes}
-                          </p>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
